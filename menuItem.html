@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="./resources/css/ext-all.css" type="text/css" rel="stylesheet" />
+    <script src="./adapter/ext/ext-base.js"></script>
+    <script src="./ext-all.js"></script>
+    <title>this is tree test</title>
+    <style>
+
+
+
+    </style>
+    <script>
+        Ext.onReady(function () {
+
+            var tmpl = Ext.DomHelper.createTemplate({
+                tag: 'tr', children: [
+                    { tag: 'td', html: 'I am {name}, {age} years old.' }
+                ]
+            });
+
+            //tmpl.append('template',{name:'Tom',age:12});
+
+            let updateProgress = function (time) {
+                Ext.MessageBox.progress("请等待", "正在提交...");
+                return function () {
+                    if (time == 3) {
+                        Ext.MessageBox.hide();
+                        Ext.MessageBox.alert('success', 'commit successfully');
+                    } else {
+                        Ext.MessageBox.updateProgress(time / 3, '还剩' + (3 - time) + '秒');
+                    }
+                }
+            };
+
+            let commitHandler = function () {
+                for (let i = 0; i <= 3; i++) {
+                    setTimeout(updateProgress(i), i * 1000);
+                }
+            };
+
+            var panel = new Ext.Panel({
+                id: 'panel',
+                html: '<div id="template"></div>'
+            });
+
+            var resetItem = new Ext.menu.Item({
+                text: 'reset',
+                handler: function () {
+                    Ext.getCmp('myForm').getForm().reset();
+                }
+            });
+
+            var tableItem = new Ext.menu.Item({
+                text: 'table',
+                handler: function () {
+                    Ext.getCmp("myTextArea").setValue("hello world!!");
+                }
+            });
+
+            var textArea = new Ext.form.TextArea({
+                id: 'myTextArea',
+                width: 400,
+                height: 300,
+                emptyText:'please input your replay information,the xtemplate can not insert into the textarea',
+                listeners:{
+                    blur:function(){
+                        if(Ext.getCmp("myTextArea").getValue()=='')
+                        Ext.getCmp("replayButton").disable();
+                        else
+                        Ext.getCmp("replayButton").enable();
+
+                    }
+                }
+            });
+
+            var toolbar = new Ext.Toolbar({
+                items: [{
+                    text: 'Edit',
+                    menu: [resetItem]
+                },
+                {
+                    text: 'Insert',
+                    menu: [tableItem]
+                }
+                ]
+            });
+
+            var contextMenu = new Ext.menu.Menu({
+                items: [{
+                    id: 'edit',
+                    text: 'Edit',
+                    menu: [
+                        {
+                            id: 'reset',
+                            text: 'reset',
+                            listeners: {
+                                click: function () {
+                                    Ext.getCmp('myForm').getForm().reset();
+                                }
+                            }
+                        }]
+                }, {
+                    id: 'insert',
+                    text: 'Insert',
+                    menu: [
+                        {
+                            id: 'table',
+                            text: 'Table',
+                            listeners: {
+                                click: function () {
+                                    Ext.getCmp("myTextArea").setValue("hello world!!");
+                                    
+
+                                }
+                            }
+                        }]
+                }]
+            });
+
+            var formPanel = new Ext.form.FormPanel({
+                // renderTo: Ext.getBody(),
+                id: 'myForm',
+                title: 'this is formPanel',
+                width: 600,
+                height: 300,
+                items: [textArea],
+                buttons: [{
+                    id:'replayButton',
+                    text: 'replay',
+                    listeners: {
+                        click: function () {
+                            commitHandler();
+                            if(Ext.getCmp(""))
+                            Ext.getCmp("replayButton").disable();
+                        }
+                    }
+                }]
+            });
+
+
+
+            Ext.get(document).on('contextmenu', function (e) {
+                e.preventDefault();
+                contextMenu.showAt(e.getXY());
+            });
+
+
+            var viewport = new Ext.Viewport({
+                title: 'this is viewport',
+                layout: 'vbox',
+                style: 'position:absolute',
+                pageX: 600,
+                pageY: 200,
+                width: 800,
+                height: 500,
+                items: [
+                    toolbar,
+                    formPanel
+                ]
+            })
+
+        })
+    </script>
+</head>
+
+<body>
+    <div id="search"></div>
+</body>
+
+</html>
